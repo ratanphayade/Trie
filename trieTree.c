@@ -54,7 +54,7 @@ int search_data(int index, char *data, nodeptr *nptr){
 
 void print_data(){
     nodeptr dp;
-    if(root == NULL)
+    if(!root)
     	printf("No Data Available");
     for(dp=root; dp != NULL; dp=(nodeptr)(dp->hh.next)) 
         printf("id %d: name %c\n", dp->id, dp->data);
@@ -79,7 +79,7 @@ int main(){
 		switch(ch){
 			case 1 : add_string(&add_data, "Number of Node(s) Created");
 				 break;
-			case 2 : add_string(&search_data, "");
+			case 2 : add_string(&search_data, "Search Status");
 				 break;
 			case 3 : print_data();
 				 break;
