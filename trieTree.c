@@ -15,13 +15,13 @@ struct node {
 	int id;
 	char data;
 	nodeptr ptr;
-    UT_hash_handle hh;
+    	UT_hash_handle hh;
 };
 
 nodeptr root = NULL;
 
 nodeptr get_node(int id, char *data, int index){
-    nodeptr dp = (nodeptr)malloc(sizeof(struct node));
+    	nodeptr dp = (nodeptr)malloc(sizeof(struct node));
 	dp->id = id;
 	dp->data = data[index];
 	dp->ptr = NULL;
@@ -36,13 +36,15 @@ int add_data(int index, char *data, nodeptr *nptr){
 		return 0;
 	cid = toascii(data[index]);//data[index] - '0';
 	HASH_FIND_INT(*nptr, &cid, dp);
-	if(dp)
+	if(dp){
 		if(data[index+1]=='\0'){
 			dp->iscomplete = 1;
 			return 0;
-		} else
+		} else {
 			return add_data(index+1, data, &dp->ptr);
-    dp = get_node(cid, data, index);
+		}
+	}
+    	dp = get_node(cid, data, index);
 	HASH_ADD_INT(*nptr, id, dp);
 	return 1 + add_data(index+1, data, &dp->ptr);
 }
@@ -55,6 +57,25 @@ int search_data(int index, char *data, nodeptr *nptr){
 		return (data[index+1]=='\0' && dp->iscomplete)? 1 : search_data(index+1, data, &dp->ptr);
 	} else
 		return 0;
+}
+
+int delete_data(int index, char *data, nodeptr *nptr){
+	int cid = toascii(data[index]);//data[index] - '0';
+	nodeptr dp;
+	HASH_FIND_INT(*nptr, &cid, dp);
+	if(data[index+1]=='\0')
+		dp->iscomplete = 0;
+	else
+		 delete_data(index+1, data, &dp->ptr);
+}
+
+int delete_nodes(int index, char *data, nodeptr *nptr){
+	if(!search_data(0,data,nptr)){
+		printf("\n Data Not Found");
+		return 0;
+	} else {
+		return delete_data(index, data, nptr);
+	}
 }
 
 int dfs_print(int length, char *data, nodeptr *nptr){
@@ -82,7 +103,7 @@ void print_data(funcdef function, char *stmt){
 	printf("\n%s : %d \n",stmt,(*function)(length, "", &root));
 }
 
-void add_string(funcdef function, char *stmt){
+void get_string(funcdef function, char *stmt){
 	char data[MAX];
 	printf("Enter the String : ");
 	scanf("%s",data);
@@ -95,16 +116,19 @@ int main(){
 		printf("\n1. Add String Value");
 		printf("\n2. Search String");
 		printf("\n3. Print Data");
+		printf("\n4. Delete String");
 		printf("\nChoice?");
 		scanf("%d",&ch);
 		switch(ch){
-			case 1 : add_string(&add_data, "Number of Node(s) Created");
+			case 1 : get_string(&add_data, "Number of Node(s) Created");
 				 break;
-			case 2 : add_string(&search_data, "Search Status");
+			case 2 : get_string(&search_data, "Search Status");
 				 break;
 			case 3 : print_data(&dfs_print, "Total number of records fetched");
 				 break;
+			case 4 : get_string(&delete_nodes,"Number of Nodes Deleted");
+				 break;
 		}
-	}while(ch<4);
+	}while(ch<5);
 	return 0;
 }
